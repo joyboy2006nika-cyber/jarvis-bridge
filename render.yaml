@@ -1,0 +1,21 @@
+# Render Blueprint for the JARVIS bridge (optional — only if hosting on Render)
+# Usage: push this folder to a Git repo, then in Render choose
+# "New > Blueprint" and point it at the repo. Render reads this file.
+# The bot itself is untouched; this deploys only the Muse -> Gemini bridge.
+services:
+  - type: web
+    name: jarvis-bridge
+    env: python
+    buildCommand: "echo 'no dependencies — Python standard library only'"
+    startCommand: "python app.py"
+    healthCheckPath: /health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: BRIDGE_API_KEY
+        sync: false
+    # NOTE: Render sets PORT automatically; app.py already reads it.
+    # Free-tier note: Render's free web service sleeps after ~15 min of
+    # inactivity, so the first /ask after idle can take up to ~a minute
+    # to wake. If the Discord bot already runs on an always-on host,
+    # deploying the bridge there instead avoids this entirely.
